@@ -14,9 +14,4 @@ class Animal {
     }
 }
 
-const a = new Animal("狗", "旺财", 3, "男");
-a.print();
-
-for (const prop in a) {
-    console.log(prop)
-}
+var a = new Animal("狗", "旺财", 3, "男");

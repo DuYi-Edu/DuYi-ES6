@@ -1,3 +1,5 @@
+const printName = "print";
+
 class Animal {
     constructor(type, name, age, sex) {
         this.type = type;
@@ -6,7 +8,7 @@ class Animal {
         this.sex = sex;
     }
 
-    print() {
+    [printName]() {
         console.log(`【种类】：${this.type}`);
         console.log(`【名字】：${this.name}`);
         console.log(`【年龄】：${this.age}`);
@@ -15,8 +17,4 @@ class Animal {
 }
 
 const a = new Animal("狗", "旺财", 3, "男");
-a.print();
-
-for (const prop in a) {
-    console.log(prop)
-}
+a[printName]();
