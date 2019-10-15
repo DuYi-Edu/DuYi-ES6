@@ -63,3 +63,7 @@
     background: url("./img/pipeUp.png");
     bottom: 112px;
 }
+
+.info{
+    text-align: center;
+}
