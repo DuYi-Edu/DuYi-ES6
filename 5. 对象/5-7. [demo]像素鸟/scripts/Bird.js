@@ -4,7 +4,8 @@ const birdWidth = parseFloat(birdStyles.width);
 const birdHeight = parseFloat(birdStyles.height);
 const birdTop = parseFloat(birdStyles.top);
 const birdLeft = parseFloat(birdStyles.left);
-const gameHeight = document.querySelector(".game").clientHeight;
+const gameDom = document.querySelector(".game");
+const gameHeight = gameDom.clientHeight;
 
 class Bird extends Rectangle {
     constructor() {
@@ -62,9 +63,3 @@ class Bird extends Rectangle {
         this.ySpeed = -550;
     }
 }
-
-var bird = new Bird();
-
-setInterval(() => {
-    bird.move(16 / 1000);
-}, 16)

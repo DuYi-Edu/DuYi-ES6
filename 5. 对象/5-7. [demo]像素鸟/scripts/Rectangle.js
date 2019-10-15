@@ -13,6 +13,7 @@ class Rectangle {
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
         this.dom = dom;
+        this.render();
     }
 
     render() {

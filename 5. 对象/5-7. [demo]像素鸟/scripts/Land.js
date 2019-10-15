@@ -5,8 +5,8 @@ const landHeight = parseFloat(landStyles.height);
 const landTop = parseFloat(landStyles.top);
 
 class Land extends Rectangle {
-    constructor() {
-        super(landWidth, landHeight, 0, landTop, -100, 0, landDom);
+    constructor(speed) {
+        super(landWidth, landHeight, 0, landTop, speed, 0, landDom);
     }
 
     onMove() {
@@ -15,9 +15,3 @@ class Land extends Rectangle {
         }
     }
 }
-
-var land = new Land();
-
-setInterval(() => {
-    land.move(16 / 1000);
-}, 16)
