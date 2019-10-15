@@ -15,6 +15,7 @@ class Bird extends Rectangle {
         this.maxY = gameHeight - landHeight - this.height;
         this.swingStatus = 1; //小鸟的翅膀状态
         this.timer = null; //翅膀煽动的计时器
+        this.render();
     }
 
     //开始煽动翅膀
@@ -60,6 +61,6 @@ class Bird extends Rectangle {
 
     //向上跳，直接给一个向上的速度
     jump() {
-        this.ySpeed = -550;
+        this.ySpeed = -450;
     }
 }
