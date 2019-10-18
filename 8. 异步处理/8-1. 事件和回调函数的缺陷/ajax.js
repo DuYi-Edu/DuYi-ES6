@@ -43,10 +43,12 @@ function ajax(obj) {
         if (xhr.readyState === 4) {
             if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
                 if (obj.success) {
+                    // resolve
                     obj.success(JSON.parse(xhr.responseText));
                 }
             } else {
                 if (obj.error) {
+                    // reject
                     obj.error(xhr.status);
                 }
             }
