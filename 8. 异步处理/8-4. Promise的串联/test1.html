@@ -66,7 +66,41 @@
 
 
         //获取李华所在班级的老师的信息
-        
+        //1. 获取李华的班级id   Promise
+        //2. 根据班级id获取李华所在班级的老师id   Promise
+        //3. 根据老师的id查询老师信息   Promise
+        const pro = ajax({
+            url: "./data/students.json"
+        })
+        pro.then(resp => {
+            for (let i = 0; i < resp.length; i++) {
+                if (resp[i].name === "李华") {
+                    return resp[i].classId; //班级id
+                }
+            }
+        }).then(cid => {
+            return ajax({
+                url: "./data/classes.json?cid=" + cid
+            }).then(cls => {
+                for (let i = 0; i < cls.length; i++) {
+                    if (cls[i].id === cid) {
+                        return cls[i].teacherId;
+                    }
+                }
+            })
+        }).then(tid => {
+            return ajax({
+                url: "./data/teachers.json"
+            }).then(ts => {
+                for (let i = 0; i < ts.length; i++) {
+                    if (ts[i].id === tid) {
+                        return ts[i];
+                    }
+                }
+            })
+        }).then(teacher => {
+            console.log(teacher);
+        })
     </script>
 </body>
 
