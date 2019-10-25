@@ -4,7 +4,10 @@ const MyPromise = (() => {
         REJECTED = "rejected",
         PromiveValue = Symbol("PromiseValue"), //状态数据
         PromiseStatus = Symbol("PromiseStatus"),
-        changeStatus = Symbol("changeStatus"); //当前状态
+        thenables = Symbol("thenables"), //thenable
+        catchables = Symbol("catchbles"), //catchables
+        changeStatus = Symbol("changeStatus"),//当前状态
+        settleHandle = Symbol("settleHandle");  //后续处理的通用函数
 
     return class MyPromise {
 
@@ -12,14 +15,17 @@ const MyPromise = (() => {
          * 改变当前Promise的状态
          * @param {*} newStatus 
          * @param {*} newValue 
+         * @param {*} queue 执行的作业队列
          */
-        [changeStatus](newStatus, newValue) {
+        [changeStatus](newStatus, newValue, queue) {
             if (this[PromiseStatus] !== PENDING) {
                 //状态无法变更
                 return;
             }
             this[PromiseStatus] = newStatus;
             this[PromiveValue] = newValue;
+            //执行相应队列中的函数
+            queue.forEach(handler => handler(newValue));
         }
 
         /**
@@ -29,13 +35,15 @@ const MyPromise = (() => {
         constructor(executor) {
             this[PromiseStatus] = PENDING;
             this[PromiveValue] = undefined;
+            this[thenables] = []; //后续处理函数的数组 -> resolved
+            this[catchables] = []; //后续处理函数的数组 -> rejected
 
             const resolve = data => {
-                this[changeStatus](RESOLVED, data);
+                this[changeStatus](RESOLVED, data, this[thenables]);
             }
 
             const reject = reason => {
-                this[changeStatus](REJECTED, reason);
+                this[changeStatus](REJECTED, reason, this[catchables]);
             }
             try {
                 executor(resolve, reject)
@@ -43,6 +51,36 @@ const MyPromise = (() => {
             catch (err) {
                 reject(err);
             }
+        }
+
+        /**
+         * 处理 后续处理函数
+         * @param {*} handler 后续处理函数
+         * @param {*} immediatelyStatus 需要立即执行的状态
+         * @param {*} queue 作业队列
+         */
+        [settleHandle](handler, immediatelyStatus, queue) {
+            if (typeof handler !== "function") {
+                return;
+            }
+            if (this[PromiseStatus] === immediatelyStatus) {
+                //直接运行
+                setTimeout(() => {
+                    handler(this[PromiveValue]);
+                }, 0);
+            }
+            else {
+                queue.push(handler);
+            }
+        }
+
+        then(thenable, catchable) {
+            this[settleHandle](thenable, RESOLVED, this[thenables])
+            this.catch(catchable);
+        }
+
+        catch(catchable) {
+            this[settleHandle](catchable, REJECTED, this[catchables])
         }
     }
 })();
