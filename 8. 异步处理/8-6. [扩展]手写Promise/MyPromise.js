@@ -7,7 +7,8 @@ const MyPromise = (() => {
         thenables = Symbol("thenables"), //thenable
         catchables = Symbol("catchbles"), //catchables
         changeStatus = Symbol("changeStatus"),//当前状态
-        settleHandle = Symbol("settleHandle");  //后续处理的通用函数
+        settleHandle = Symbol("settleHandle"), //后续处理的通用函数
+        linkPromise = Symbol("linkPromise");  //创建串联的Promise
 
     return class MyPromise {
 
@@ -74,13 +75,61 @@ const MyPromise = (() => {
             }
         }
 
+        [linkPromise](thenalbe, catchable) {
+            function exec(data, handler, resolve, reject) {
+                try {
+                    const result = handler(data); //得到当前Promise的处理结果
+                    if (result instanceof MyPromise) {
+                        result.then(d => {
+                            resolve(d)
+                        }, err => {
+                            reject(err);
+                        })
+                    }
+                    else {
+                        resolve(result);
+                    }
+                }
+                catch (err) {
+                    reject(err);
+                }
+            }
+
+            return new MyPromise((resolve, reject) => {
+                this[settleHandle](data => {
+                    exec(data, thenalbe, resolve, reject);
+                }, RESOLVED, this[thenables])
+
+                this[settleHandle](reason => {
+                    exec(reason, catchable, resolve, reject);
+                }, REJECTED, this[catchables])
+            })
+        }
+
         then(thenable, catchable) {
-            this[settleHandle](thenable, RESOLVED, this[thenables])
-            this.catch(catchable);
+            return this[linkPromise](thenable, catchable);
         }
 
         catch(catchable) {
-            this[settleHandle](catchable, REJECTED, this[catchables])
+
+            return this[linkPromise](undefined, catchable);
+        }
+
+
+        static All(proms) {
+
+        }
+
+        static race(proms) {
+
+        }
+
+        static resolve(data) {
+
+        }
+
+        static reject(reason) {
+            
         }
     }
 })();

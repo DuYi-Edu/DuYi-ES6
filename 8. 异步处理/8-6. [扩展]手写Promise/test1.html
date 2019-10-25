@@ -13,29 +13,20 @@
     <script>
         const pro = new MyPromise((resolve, reject) => {
             setTimeout(() => {
-                reject(1)
+                resolve(1)
             }, 3000);
         })
 
         pro.then(data => {
-            console.log(1, data);
-        })
-        pro.then(data => {
-            console.log(2, data);
-        })
-        pro.then(data => {
-            console.log(3, data);
-        })
-        pro.catch(err => {
-            console.log(1, err);
-        })
-        pro.catch(err => {
-            console.log(2, err);
-        })
-        pro.then(data => {
-            console.log(4, data);
-        }, err => {
-            console.log(3, err);
+            console.log(1, data)
+            return 123;
+        }).then(data => {
+            console.log(2, data)
+            return new MyPromise(resolve => {
+                resolve(456);
+            });
+        }).then(data => {
+            console.log(3, data)
         })
 
         console.log(pro)
