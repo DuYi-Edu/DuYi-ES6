@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        const pro1 = new Promise(resolve => {
+            setTimeout(() => {
+                resolve(123);
+            }, 3000);
+        })
+
+        const pro2 = Promise.reject(pro1);
+        // const pro2 = new Promise((resolve, reject) => {
+        //     reject(pro1);
+        // })
+        console.log(pro2)
+        console.log(pro1 === pro2);
+    </script>
+</body>
+
+</html>
