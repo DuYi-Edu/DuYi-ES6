@@ -116,20 +116,57 @@ const MyPromise = (() => {
         }
 
 
-        static All(proms) {
-
+        static all(proms) {
+            return new Promise((resolve, reject) => {
+                const results = proms.map(p => {
+                    const obj = {
+                        result: undefined,
+                        isResolved: false
+                    }
+                    p.then(data => {
+                        obj.result = data;
+                        obj.isResolved = true;
+                        //判断是否所有的全部完成
+                        const unResolved = results.filter(r => !r.isResolved)
+                        if (unResolved.length === 0) {
+                            //全部完成
+                            resolve(results.map(r => r.result));
+                        }
+                    }, reason => {
+                        reject(reason);
+                    })
+                    return obj;
+                })
+            })
         }
 
         static race(proms) {
-
+            return new Promise((resolve, reject) => {
+                proms.forEach(p => {
+                    p.then(data => {
+                        resolve(data);
+                    }, err => {
+                        reject(err);
+                    })
+                })
+            })
         }
 
         static resolve(data) {
-
+            if (data instanceof MyPromise) {
+                return data;
+            }
+            else {
+                return new MyPromise(resolve => {
+                    resolve(data);
+                })
+            }
         }
 
         static reject(reason) {
-            
+            return new MyPromise((resolve, reject) => {
+                reject(reason);
+            })
         }
     }
 })();
