@@ -10,6 +10,10 @@ class MySet {
         }
     }
 
+    get size() {
+        return this._datas.length;
+    }
+
     add(data) {
         if (!this.has(data)) {
             this._datas.push(data);
